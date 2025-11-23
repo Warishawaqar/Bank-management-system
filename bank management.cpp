@@ -5,6 +5,7 @@
 void create(char[],char[],int*,float*);
 void login(char[],char[],int*,float*);
 void deposit(char[],char[],int*,float*);
+void saving(int*,float*);
 int main(){
 	int choice1,id,choice2;
 	char name[30],pin[14];
@@ -21,6 +22,7 @@ int main(){
 		case 2:
 			create(name,pin,&id,&money);
 			break;
+
 	}
 	system("cls");
 	printf("\n                  WELCOME %s !\n",name);
@@ -31,6 +33,9 @@ int main(){
     	case 1:
     		deposit(name,pin,&id,&money);
     		break;
+    	case 5:
+	    	saving(&id,&money);
+	    	break;
 }
 }
 void create(char name[],char pin[],int *id,float *money){
@@ -125,6 +130,29 @@ void deposit(char name[],char pin[],int *id,float *money){
 	remove("bank.txt");
 	rename("bank01.txt", "bank.txt");
 	
+}
+void saving(int *id,float *money){
+	char pur[20];
+	int choice,days;
+	float mon;
+	FILE *fp=NULL;
+	printf("\n                   Virtual Savings pot\n");
+	printf("                  1. Create a virtual savings pot\n                  2.View all your virtual savings pot\n");
+	printf("\nSelect your option: ");
+	scanf("%d",&choice);
+	switch(choice){
+		case 1:
+			printf("\nMention the following details ");
+			printf("\nPurpose: ");
+			scanf("%s",pur);
+			printf("\nAmount of money: ");
+			scanf("%f",&mon);
+			printf("\nDays to allocate the money: ");
+			scanf("%d",&days);
+			fp=fopen("saving.txt","w");
+			fprintf(fp,"%d,%s,%f,%d\n",*id,pur,mon,days);
+			fclose(fp);
+            	}
 }
 
 
