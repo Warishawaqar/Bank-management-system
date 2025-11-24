@@ -11,28 +11,35 @@ void transfer(char[],char[],int*,float*);
 void inquiry(char[],char[],int*,float*);
 void saving(int*,float*);
 int main(){
-	int choice1,id,choice2;
+	int choice1,id,choice2,r=0;
 	char name[30],pin[14];
 	float money;
-	
+	do{
 	printf("               WELCOME TO BANK MANAGEMENT SYSTEM\n");
 	printf("                    1. Login account\n                    2. Create an account\n");
 	printf("Enter your option: ");
 	scanf("%d",&choice1);
+	
+	
 	switch(choice1){
 		case 1:
 			login(name,pin,&id,&money);
+			r=0;
 			break;
 		case 2:
 			create(name,pin,&id,&money);
+			r=0;
 			break;
+		default: 
+            printf("\n\tERROR: Invalid choice. Please try again.\n");
+            r=1;
 
-	}
+	}}while(r==1);
 	
 	for(;;){
 	system("cls");
 	printf("\n                  WELCOME %s !\n",name);
-	printf("                     1. Balance deposit\n                     2.Balance withdrawl\n                     3.Money transfer\n                     4.Bank inquiry\n                     5.Virtual savings pot\n");
+	printf("                     1.Balance deposit\n                     2.Balance withdrawl\n                     3.Money transfer\n                     4.Bank inquiry\n                     5.Virtual savings pot\n                     6.Exit Program\n");
     printf("Enter your choice: ");
     scanf("%d",&choice2);
     switch(choice2){
@@ -53,6 +60,10 @@ int main(){
 	    	break;
 	    case 6:
 	    	return 0;
+	    	break;
+	    default:
+            printf("\n\tERROR: Invalid choice. Please try again.\n");
+            break;
 	    
 }
 sleep(3);
@@ -60,8 +71,12 @@ sleep(3);
 }
 void create(char name[],char pin[],int *id,float *money){
 	int count_special=0,count_alpha=0,count_digit=0,count_upper=0,r=0;
-    FILE *fp;
+    FILE *fp=NULL;
     fp=fopen("bank.txt","a");
+    if(fp==NULL){
+    printf("\nERROR: Failed to open database files. Check file names and permissions.\n");
+	return;	
+	}
 	        printf("\nEnter your name: ");
 			scanf("%s",name);
 			printf("\nCreate an 8 digit account ID: ");
@@ -107,7 +122,7 @@ void create(char name[],char pin[],int *id,float *money){
 }
 void login(char name[],char pin[],int *id,float *money){
 	char tpin[14];
-	int tid;
+	int tid,r=0;
 	float tmoney;
 	FILE *fp=NULL;
 	printf("\nEnter your account id: ");
@@ -115,10 +130,20 @@ void login(char name[],char pin[],int *id,float *money){
 	printf("\nEnter the password: ");
 	scanf("%s",pin);
 	fp=fopen("bank.txt","r");
+	if(fp==NULL){
+    printf("\nERROR: Failed to open database files. Check file names and permissions.\n");
+	return;	
+	}
 	while(!feof(fp)){
 		fscanf(fp," %[^,],%d,%[^,],%f",name,&tid,tpin,money);
-		if((*id==tid)&&!(strcmp(pin,tpin)))
-		break;
+		if((*id==tid)&&!(strcmp(pin,tpin))){
+			r=1;
+			break;
+		}
+	}
+	if(r==0){
+		printf("\nError: Account not found.");
+		return;
 	}
 	fclose(fp);
 }
@@ -135,7 +160,7 @@ void deposit(char name[],char pin[],int *id,float *money){
 	fp1=fopen("bank01.txt","w");
 	if (fp == NULL || fp1 == NULL) {
     printf("\nERROR: Failed to open database files. Check file names and permissions.\n");
-
+    return;
 	}
 	while(fscanf(fp,"%30[^,],%d,%14[^,],%f\n",name01,&id01,pin01,&money01)==4){
 		
